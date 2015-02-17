@@ -1,14 +1,34 @@
 import scrapy
 from panoramafirm_crawler.items import Firma
+from scrapy.contrib.spiders import CrawlSpider, Rule
+from scrapy.contrib.linkextractors import LinkExtractor
 
-class PanoramafirmSpider(scrapy.Spider):
+class PanoramafirmSpider(CrawlSpider):
     name = "panoramafirm"
     allowed_domains = ["panoramafirm.pl"]
     start_urls = [
-        "http://panoramafirm.pl/serwis_komputer%C3%B3w/%C5%82%C3%B3dzkie,,%C5%82%C3%B3d%C5%BA"
-    ]
+        "http://panoramafirm.pl/serwis_komputer%C3%B3w/%C5%82%C3%B3dzkie,,%C5%82%C3%B3d%C5%BA",
+        "http://panoramafirm.pl/szukaj?k=audyty+oprogramowania+i+sprz%C4%99tu+komputerowego&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=informatyka&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=internet&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=odzyskiwanie+i+ochrona+danych+komputerowych&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=operatorzy+telekomunikacyjni&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=oprogramowanie+komputerowe&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=systemy+i+us%C5%82ugi+telekomunikacyjne&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=systemy+i+technologie+multimedialne&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=sprz%C4%99t+i+centrale+telefoniczne&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=sieci+komputerowe+i+integracja+system%C3%B3w&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=serwisy+informacyjne&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=sprz%C4%99t+radiokomunikacyjny&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        "http://panoramafirm.pl/szukaj?k=stacje+radiowe+i+telewizyjne&l=%C5%81%C3%B3d%C5%BA+%28%C5%82%C3%B3dzkie%29",
+        ]
 
-    def parse(self, response):
+    rules = (
+        Rule(LinkExtractor(
+            restrict_xpaths=("//a[contains(@class, 'addax-cs_hl_nextpage')]")), callback="parse_item", follow=True),
+    )
+
+    def parse_item(self, response):
         for sel in response.xpath("//li[contains(@class, 'vcard')]"):
             firma = Firma()
             try:
@@ -53,19 +73,22 @@ class PanoramafirmSpider(scrapy.Spider):
                 except:
                     firma['phone'] = ""
             try:
-                firma['address'] = sel. \
+                address = sel. \
                     xpath("div[@class='contacts']/*/following-sibling::text()"). \
-                    extract()[0].encode('utf-8').strip()
+                    extract()[0].encode('utf-8').strip().split(", ")
+                firma['address'] = address[0]
+                firma['city'] = address[1]
+                firma['area'] = ""
             except:
                 try:
-                    firma['address'] = '; '. \
-                        join(
-                            [''.join(sel. \
-                                xpath("div/div[@class='companyAddress popoverShow']/text()"). \
-                                extract()).encode('utf-8').strip(),
-                            sel. \
-                                xpath("div/div[@class='companyAddress popoverShow']/*/text()"). \
-                                extract()[0].encode('utf-8')])
+                    address = sel. \
+                        xpath("div/div[@class='companyAddress popoverShow']/*/text()"). \
+                        extract()[0].encode('utf-8').split(", ")
+                    firma['address'] = address[0]
+                    firma['city'] = address[1]
+                    firma['area'] = ''.join(sel. \
+                        xpath("div/div[@class='companyAddress popoverShow']/text()"). \
+                        extract()).encode('utf-8').strip(),
                 except:
                     firma['address'] = ""
             try:

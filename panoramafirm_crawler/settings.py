@@ -14,4 +14,4 @@ SPIDER_MODULES = ['panoramafirm_crawler.spiders']
 NEWSPIDER_MODULE = 'panoramafirm_crawler.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-#USER_AGENT = 'panoramafirm_crawler (+http://www.yourdomain.com)'
+USER_AGENT = 'panoramafirm_crawler (+http://www.eurekagroup.pl)'
