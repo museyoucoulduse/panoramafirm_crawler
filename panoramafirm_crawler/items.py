@@ -18,3 +18,4 @@ class Firma(scrapy.Item):
     address = scrapy.Field()
     facebook = scrapy.Field()
     business = scrapy.Field()
+    panoramafirm = scrapy.Field()
