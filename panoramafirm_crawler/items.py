@@ -19,3 +19,5 @@ class Firma(scrapy.Item):
     facebook = scrapy.Field()
     business = scrapy.Field()
     panoramafirm = scrapy.Field()
+    city = scrapy.Field()
+    area = scrapy.Field()

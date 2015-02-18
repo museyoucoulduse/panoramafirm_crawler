@@ -14,4 +14,9 @@ SPIDER_MODULES = ['panoramafirm_crawler.spiders']
 NEWSPIDER_MODULE = 'panoramafirm_crawler.spiders'
 
 # Crawl responsibly by identifying yourself (and your website) on the user-agent
-USER_AGENT = 'panoramafirm_crawler (+http://www.eurekagroup.pl)'
+USER_AGENT = 'lulz (+http://www.hihihi.pl)'
+
+# DOWNLOADER_MIDDLEWARES = {
+#  #you need this line in order to scrap through a proxy/proxy list
+# 'scrapy.contrib.downloadermiddleware.httpproxy.HttpProxyMiddleware': 110,
+# }
